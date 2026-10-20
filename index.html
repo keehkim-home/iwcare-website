@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IWCare — 약 먹을 시간을 잊지 않게, 스마트 약장 · MediHome</title>
+<meta name="description" content="IWCare의 MediHome 스마트 약장. UHF RFID로 약을 자동으로 인식하고, 가족에게 복약 알림을 실시간으로 전달합니다. 가정·요양시설·약국까지 확장 가능한 돌봄 플랫폼.">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='2' y='2' width='96' height='96' rx='24' fill='%2314514F'/%3E%3Cg transform='translate(50 51) scale(.66) translate(-50 -52)' fill='none' stroke='%23FAF8F4' stroke-width='10' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M79.11 76.43 A38 38 0 1 1 79.11 27.57'/%3E%3Cpath d='M29 42 L39 68 L50 50 L61 68 L71 42'/%3E%3C/g%3E%3Ccircle cx='50' cy='30.4' r='6.6' fill='%23E8826A'/%3E%3C/svg%3E">
+<style>
+  /* v4 brand tokens — Teal & Coral */
+  :root{
+    --ink:#0E2524; --navy:#14514F; --navy-2:#1E6B68;
+    --mint:#E8826A; --mint-soft:#EEF3F1; --coral-soft:#FBE9E3;
+    --paper:#FAF8F4; --line:#E4E6E1; --muted:#5B6B69;
+    --r:20px; --sans:"Noto Sans KR",-apple-system,sans-serif;
+    --brand:"Manrope","Noto Sans KR",sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--sans);color:var(--ink);background:var(--paper);line-height:1.6;-webkit-font-smoothing:antialiased;word-break:keep-all}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 32px}
+  h1,h2,h3{line-height:1.25;letter-spacing:-.02em;text-wrap:balance;font-family:var(--brand),var(--sans)}
+  p{text-wrap:pretty}
+  .eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--navy-2)}
+
+  /* nav */
+  nav{position:sticky;top:0;z-index:20;background:color-mix(in oklch,var(--paper) 88%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid transparent;transition:border-color .2s}
+  nav.scrolled{border-color:var(--line)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;height:72px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px;color:var(--navy)}
+  .logo .wm{display:flex;flex-direction:column;gap:4px;line-height:1;font-family:var(--brand)}
+  .logo .wm b{font-weight:700;font-size:22px;letter-spacing:-.02em;color:var(--navy)}
+  .logo .wm b i{font-style:normal;color:var(--mint)}
+  .logo .wm small{font-weight:400;font-size:9.5px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
+  .nav-links{display:flex;gap:32px;font-size:15px;color:var(--muted)}
+  .nav-links a:hover{color:var(--navy)}
+  .btn{display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 24px;border-radius:999px;font-weight:600;font-size:15px;border:0;cursor:pointer;font-family:inherit;transition:transform .15s,background .15s}
+  .btn:active{transform:scale(.98)}
+  .btn-primary{background:var(--navy);color:#fff}
+  .btn-primary:hover{background:var(--navy-2)}
+  .btn-ghost{background:transparent;color:var(--navy);box-shadow:inset 0 0 0 1.5px var(--line)}
+  .btn-ghost:hover{box-shadow:inset 0 0 0 1.5px var(--navy-2)}
+  .nav-cta{height:42px;padding:0 20px;font-size:14px}
+
+  /* hero */
+  .hero{position:relative;overflow:hidden;padding:80px 0 120px}
+  .hero-wm{position:absolute;right:-140px;top:-60px;opacity:.06;pointer-events:none;z-index:0}
+  .hero .wrap{position:relative;z-index:1}
+  .hero-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:64px;align-items:center}
+  .hero .eyebrow{margin-bottom:14px}
+  .hero h1{font-size:clamp(36px,5vw,60px);font-weight:700;color:var(--navy);margin:0 0 24px}
+  .hero h1 em{font-style:normal;color:var(--mint)}
+  .hero p.lead{font-size:18px;color:var(--muted);max-width:32em;margin-bottom:32px}
+  .hero p.lead b{color:var(--ink)}
+  .hero-cta{display:flex;gap:12px;flex-wrap:wrap}
+  .audience{display:flex;gap:8px;margin-top:40px;flex-wrap:wrap}
+  .chip{font-size:13px;padding:6px 14px;border-radius:999px;background:#fff;border:1px solid var(--line);color:var(--muted)}
+
+  .hero-visual{position:relative;aspect-ratio:1/1.02}
+  .hero-visual .ph{position:absolute;inset:0 0 0 12%;width:88%;height:100%;border-radius:32px;background:var(--mint-soft);display:grid;place-items:center;color:var(--muted);font-family:var(--mono);font-size:12px}
+  .hero-tile{position:absolute;right:-14px;top:-18px;z-index:3;border-radius:20px;box-shadow:0 14px 30px -12px rgba(0,0,0,.3);background:var(--paper);padding:6px}
+  .float-card{position:absolute;background:#fff;border-radius:18px;box-shadow:0 20px 50px -20px rgba(14,37,36,.28);padding:18px 20px;font-size:14px}
+  .fc-1{left:0;top:14%;width:260px}
+  .fc-2{right:-12px;bottom:10%;width:240px}
+  .fc-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .fc-time{font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .fc-title{font-weight:600;margin-top:4px}
+  .dot{width:10px;height:10px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 4px var(--mint-soft)}
+  .bar{height:6px;background:var(--mint-soft);border-radius:4px;margin-top:12px;overflow:hidden}
+  .bar i{display:block;height:100%;width:86%;background:var(--navy-2);border-radius:4px}
+  .fc-sub{font-size:12px;color:var(--muted);margin-top:8px}
+
+  /* sections */
+  section{scroll-margin-top:72px}
+  .sec{padding:120px 0}
+  .sec.soft{background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .sec-head{display:flex;justify-content:space-between;align-items:end;gap:40px;margin-bottom:56px;flex-wrap:wrap}
+  .sec-head h2{font-size:clamp(30px,3.6vw,44px);color:var(--navy);margin-top:14px;max-width:18em}
+  .sec-head p{color:var(--muted);max-width:28em;font-size:17px}
+
+  /* features */
+  .features{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .feat{position:relative;background:#fff;border:1px solid var(--line);border-radius:24px;padding:32px 28px;display:flex;flex-direction:column;gap:12px;transition:.25s}
+  .feat:hover{transform:translateY(-4px);border-color:var(--navy-2);box-shadow:0 30px 60px -30px rgba(14,37,36,.22)}
+  .feat .ic{width:46px;height:46px;border-radius:14px;background:var(--mint-soft);display:flex;align-items:center;justify-content:center;font-size:22px}
+  .feat .pn{font-family:var(--mono);font-size:12px;color:var(--navy-2);font-weight:500}
+  .feat h3{font-size:20px;color:var(--navy);font-family:var(--brand),var(--sans)}
+  .feat p{color:var(--muted);font-size:15px}
+  .feat .meta{margin-top:auto;padding-top:14px;font-family:var(--mono);font-size:11.5px;color:var(--mint);letter-spacing:.04em}
+
+  /* flow band */
+  .flow{background:var(--navy);color:#fff;border-radius:32px;padding:72px 64px;display:grid;grid-template-columns:1fr 2fr;gap:56px;align-items:center}
+  .flow h2{font-size:clamp(28px,3vw,38px);color:#fff;margin:14px 0 0}
+  .flow .eyebrow{color:var(--mint)}
+  .flow-lead{color:rgba(255,255,255,.7);font-size:16px;margin-top:18px;max-width:24em}
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;counter-reset:s}
+  .step{padding:0 18px;border-left:1px solid rgba(255,255,255,.18)}
+  .step:first-child{border-left:none;padding-left:0}
+  .step b{display:block;font-family:var(--mono);font-size:11.5px;color:var(--mint);margin-bottom:10px;font-weight:500;letter-spacing:.06em}
+  .step h4{font-size:17px;margin-bottom:8px;color:#fff}
+  .step p{font-size:13.5px;color:rgba(255,255,255,.7)}
+
+  /* variants */
+  .variants{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .variant{position:relative;display:flex;flex-direction:column;gap:14px;padding:36px 32px;border-radius:24px;background:#fff;border:1px solid var(--line);transition:.25s}
+  .variant:hover{transform:translateY(-4px);box-shadow:0 30px 60px -30px rgba(14,37,36,.22);border-color:var(--navy-2)}
+  .variant .pn-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .variant .pn{font-family:var(--mono);font-size:11.5px;color:var(--mint);font-weight:500;letter-spacing:.06em}
+  .variant h3{font-size:22px;color:var(--navy)}
+  .variant p{color:var(--muted);font-size:15px}
+  .variant ul{list-style:none;display:flex;flex-direction:column;gap:8px;font-size:14px;color:var(--muted);margin-top:6px}
+  .variant li{display:flex;gap:10px;align-items:baseline}
+  .variant li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--mint);flex:none;transform:translateY(-2px)}
+  .variant .for{margin-top:auto;padding-top:18px;font-family:var(--mono);font-size:12px;color:var(--navy-2);border-top:1px solid var(--line)}
+  .variant.alt{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .variant.alt h3{color:#fff}
+  .variant.alt p,.variant.alt li,.variant.alt .for{color:rgba(255,255,255,.78)}
+  .variant.alt .pn{color:var(--mint)}
+  .variant.alt li::before{background:var(--mint)}
+  .variant.alt .for{color:var(--mint);border-color:rgba(255,255,255,.18)}
+  .variant.alt:hover{border-color:var(--mint-soft)}
+
+  /* about / trust */
+  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+  .about-media{position:relative}
+  .about-media .ph{aspect-ratio:5/4;width:100%;border-radius:20px;background:var(--mint-soft);display:grid;place-items:center;color:var(--muted);font-family:var(--mono);font-size:12px}
+  .concept{position:absolute;right:-24px;bottom:-32px;max-width:300px;display:flex;flex-direction:column;gap:12px;padding:22px 24px;border-radius:20px;background:var(--paper);border:1px solid var(--line);box-shadow:0 24px 50px -24px rgba(14,37,36,.3)}
+  .concept p{font-size:13.5px;color:var(--muted);line-height:1.6;margin:0}
+  .concept b{font-family:var(--brand);color:var(--navy)}
+  .concept b.co{color:var(--mint)}
+  .about h2{font-size:clamp(30px,3.6vw,44px);color:var(--navy);margin:14px 0 24px}
+  .about p{color:var(--muted);font-size:17px;margin-bottom:16px;max-width:32em}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:32px}
+  .stat{padding:20px;border-radius:16px;background:#fff;border:1px solid var(--line)}
+  .stat .num{font-family:var(--brand);font-size:30px;font-weight:700;color:var(--navy);letter-spacing:-.02em}
+  .stat .num i{font-style:normal;color:var(--mint)}
+  .stat .lbl{font-size:13px;color:var(--muted);margin-top:4px}
+  .stats-note{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-top:14px}
+
+  /* leadership */
+  .lead{padding:120px 0;background:#fff;border-top:1px solid var(--line)}
+  .team{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:40px}
+  .member{background:#fff;border:1px solid var(--line);border-radius:24px;overflow:hidden;display:flex;flex-direction:column}
+  .member .ph-photo{aspect-ratio:1/1;background:var(--mint-soft);display:grid;place-items:center;color:var(--muted);font-family:var(--mono);font-size:11px}
+  .member-body{padding:22px 24px 26px}
+  .role{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--navy-2)}
+  .member h3{font-size:22px;color:var(--navy);margin:6px 0 4px;font-family:var(--brand),var(--sans)}
+  .member h3 small{font-size:15px;font-weight:500;color:var(--muted);margin-left:4px}
+  .member p{font-size:14px;color:var(--muted)}
+  .member.ceo{border-color:var(--navy-2)}
+  .member.ceo .role{color:#fff;background:var(--navy);display:inline-block;padding:3px 10px;border-radius:999px}
+  .roster-note{margin-top:14px;font-size:13px;color:var(--muted);font-family:var(--mono)}
+  .joint{margin-top:36px;display:grid;grid-template-columns:auto 1fr;gap:32px;align-items:center;padding:28px 32px;border-radius:24px;background:var(--navy);color:#fff}
+  .joint-head{display:flex;align-items:center;gap:18px}
+  .joint .eyebrow{color:var(--mint)}
+  .joint h3{font-size:22px;margin-top:6px;color:#fff}
+  .joint-units{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .joint-units a{padding:16px 18px;border-radius:14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);font-size:15px;font-weight:600;transition:background .15s}
+  .joint-units a:hover{background:rgba(255,255,255,.16)}
+  .joint-units span{display:block;font-family:var(--mono);font-size:11px;font-weight:400;color:var(--mint);margin-bottom:4px}
+  .joint-units em{display:block;font-style:normal;font-size:12.5px;font-weight:400;color:rgba(255,255,255,.65);margin-top:4px}
+
+  /* contact */
+  .contact-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:72px}
+  .contact h2{font-size:clamp(30px,3.6vw,44px);color:var(--navy);margin:14px 0 20px}
+  .info{margin-top:32px;display:flex;flex-direction:column;gap:18px;font-size:15px}
+  .info div{display:grid;grid-template-columns:84px 1fr;gap:12px;align-items:baseline}
+  .info dt{font-family:var(--mono);font-size:12px;color:var(--muted)}
+  form{background:#fff;border:1px solid var(--line);border-radius:24px;padding:40px;display:flex;flex-direction:column;gap:20px}
+  .seg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .seg label{cursor:pointer;position:relative}
+  .seg input{position:absolute;opacity:0;pointer-events:none}
+  .seg span{display:block;text-align:center;padding:14px 8px;border-radius:12px;border:1.5px solid var(--line);font-size:14.5px;font-weight:500;transition:.15s}
+  .seg input:checked + span{border-color:var(--navy);background:var(--navy);color:#fff}
+  .field{display:flex;flex-direction:column;gap:8px}
+  .field label{font-size:13.5px;font-weight:600}
+  .field input,.field textarea{font-family:inherit;font-size:16px;padding:14px 16px;border-radius:12px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);outline:none;transition:border-color .15s}
+  .field input:focus,.field textarea:focus{border-color:var(--navy-2);background:#fff}
+  .field textarea{min-height:120px;resize:vertical}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+  footer{background:var(--ink);color:#C9D3D1;padding:72px 0 40px}
+  .foot-top{display:flex;justify-content:space-between;align-items:center;gap:32px;flex-wrap:wrap;padding-bottom:40px}
+  .foot-brand{display:flex;align-items:center;gap:16px}
+  .foot-brand .wm{display:flex;flex-direction:column;gap:4px;line-height:1;font-family:var(--brand)}
+  .foot-brand .wm small{font-weight:400;font-size:11px;letter-spacing:.24em;color:var(--mint)}
+  .foot-brand .wm b{font-weight:700;font-size:26px;letter-spacing:-.02em;color:var(--paper)}
+  .foot-links{display:flex;gap:28px;flex-wrap:wrap;font-size:14px}
+  .foot-links a:hover{color:#fff}
+  .foot{border-top:1px solid rgba(255,255,255,.12);padding-top:32px;font-size:13.5px;color:#8FA19E;display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap}
+
+  .reveal{opacity:0;transform:translateY(20px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.in{opacity:1;transform:none}
+
+  @media (max-width:960px){
+    .wrap{padding:0 22px}
+    .nav-links{display:none}
+    .hero{padding:48px 0 80px}
+    .hero-grid,.about-grid,.contact-grid{grid-template-columns:1fr;gap:48px}
+    .features,.variants,.stats,.seg{grid-template-columns:1fr 1fr}
+    .team{grid-template-columns:1fr 1fr}
+    .flow{grid-template-columns:1fr;padding:48px 28px;gap:36px}
+    .steps{grid-template-columns:1fr;gap:24px}
+    .step{border-left:none;border-top:1px solid rgba(255,255,255,.18);padding:18px 0 0}
+    .step:first-child{border-top:none;padding-top:0}
+    .sec{padding:80px 0}
+    .sec-head{margin-bottom:40px}
+    .joint{grid-template-columns:1fr;padding:24px}
+    .joint-units{grid-template-columns:1fr}
+    .fc-1{width:220px} .fc-2{width:200px;right:0}
+    form{padding:28px 22px}
+    .row2{grid-template-columns:1fr}
+    .concept{position:static;max-width:none;margin-top:16px}
+  }
+  @media (max-width:600px){
+    .features,.variants,.stats,.seg,.team{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="wrap nav-in">
+    <a href="#top" class="logo" aria-label="IWCare 홈">
+      <span data-logo data-size="36"></span>
+      <span class="wm"><b>IW<i>Care</i></b><small>Intelligent Wellness Care</small></span>
+    </a>
+    <div class="nav-links">
+      <a href="#features">6대 기능</a>
+      <a href="#how">작동 흐름</a>
+      <a href="#variants">활용 모델</a>
+      <a href="#about">회사 소개</a>
+      <a href="#about#leadership">경영진</a>
+    </div>
+    <a href="#contact" class="btn btn-primary nav-cta">도입 문의</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <span class="hero-wm" data-logo data-v="fine" data-size="560"></span>
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">Smart Medicine Cabinet · MediHome</div>
+      <h1>약 먹을 시간을<br>잊지 않게, <em>스마트 약장</em></h1>
+      <p class="lead"><b>UHF RFID 기반 가정용 스마트 약장 MediHome.</b> 약병을 그대로 넣기만 하면 재고와 유효기한이 자동으로 기록되고, 복약 시간에는 빛·소리로 알려드립니다. 멀리 있는 가족에게는 실시간으로 알림이 갑니다.</p>
+      <div class="hero-cta">
+        <a href="#contact" class="btn btn-primary">도입 문의하기 →</a>
+        <a href="#features" class="btn btn-ghost">6대 기능 살펴보기</a>
+      </div>
+      <div class="audience">
+        <span class="chip">가정 · 시니어 가정</span><span class="chip">요양원 · 병원</span><span class="chip">지자체 복약지원</span><span class="chip">약국 · 파트너</span>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <span class="ph">대표 제품 사진 (스마트 약장)</span>
+      <span class="hero-tile" data-logo data-v="tile" data-size="88" aria-label="IWCare 앱 아이콘"></span>
+      <div class="float-card fc-1">
+        <div class="fc-row"><span class="fc-time">08:00 AM</span><span class="dot"></span></div>
+        <div class="fc-title">아침 혈압약 복용 완료</div>
+        <div class="fc-sub">보호자에게 알림이 전송되었습니다</div>
+      </div>
+      <div class="float-card fc-2">
+        <div class="fc-row"><span class="fc-title" style="margin:0">이번 주 복약</span><span class="fc-time">예시</span></div>
+        <div class="bar"><i></i></div>
+        <div class="fc-sub">AI 케어 리포트 자동 생성</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="sec" id="features">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div><div class="eyebrow">Six Core Features</div><h2>MediHome 스마트 약장, 6가지 핵심 기능</h2></div>
+      <p>RFID 일괄 인식과 가족 공유 앱, 공공데이터 연계 — 가정의 모든 의약품·건강기능식품을 하나의 인터페이스로 통합합니다.</p>
+    </div>
+    <div class="features">
+      <div class="feat reveal"><div class="ic">📡</div><span class="pn">01 · RFID</span><h3>자동 입고 · 일괄 판독</h3><p>약장 문을 닫으면 내부 UHF RFID 리더가 모든 태그를 일괄 판독(초당 수십 개)합니다. 별도 조작 없이 입·출고 이력이 자동 기록됩니다.</p><span class="meta">UHF RFID · 비접촉 자동</span></div>
+      <div class="feat reveal"><div class="ic">📷</div><span class="pn">02 · 바코드 · QR</span><h3>복합 인식 구조</h3><p>RFID 태그가 없는 일반 의약품과 건강기능식품은 바코드·QR로 등록합니다. 현재 유통 제품과 미래 표준 RFID 의약품을 모두 수용합니다.</p><span class="meta">호환성 극대화</span></div>
+      <div class="feat reveal"><div class="ic">📆</div><span class="pn">03 · 만료 관리</span><h3>단계별 만료 알림</h3><p>약 등록 시점부터 유효기간을 자동 추적합니다. D-90 · D-30 · D-7 단계에 따라 빛·소리·앱 알림으로 알려 폐기·유실을 줄입니다.</p><span class="meta">D-90 · D-30 · D-7</span></div>
+      <div class="feat reveal"><div class="ic">🌡️</div><span class="pn">04 · 환경 모니터링</span><h3>보관 환경 관리</h3><p>내장 온·습도 센서가 약장 내부 상태를 상시 측정해 보관 주의사항 누락을 방지합니다. 상태 LED(녹·노·빨)로 정상·임박·만료를 한눈에 안내.</p><span class="meta">온습도 센서 · 3색 LED</span></div>
+      <div class="feat reveal"><div class="ic">📱</div><span class="pn">05 · 가족 공유 앱</span><h3>구성원별 권한 · 알림</h3><p>아이·어른·부모님 계정을 분리하고, 복약 알림과 만료 경고를 각각 설정합니다. 멀리 사는 가족도 실시간으로 재고·이력·상태를 확인합니다.</p><span class="meta">개인 · 가족 · 돌봄 기관</span></div>
+      <div class="feat reveal"><div class="ic">🔗</div><span class="pn">06 · 공공데이터 연계</span><h3>효능 · 용법 · 보관 정보</h3><p>식약처 e약은요·낱알식별 등 공공데이터와 연계해 약의 효능·용법·보관법까지 조회할 수 있습니다. 의약품 식별 표준 확대에 맞춰 확장.</p><span class="meta">식약처 공개 API 연동</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec soft" id="how">
+  <div class="wrap">
+    <div class="flow reveal">
+      <div>
+        <div class="eyebrow">How It Works</div>
+        <h2>사용은 단순하게,<br>시스템은 정밀하게</h2>
+        <p class="flow-lead">UHF RFID 리더·센서·펌웨어·클라우드·앱이 하나의 흐름으로 연결됩니다. 어르신은 평소처럼 약장을 열기만 하면 됩니다.</p>
+      </div>
+      <div class="steps">
+        <div class="step"><b>STEP 01</b><h4>약품 등록</h4><p>RFID 태그 제품은 약장에 넣기만 하면 됩니다. 일반 제품은 앱에서 바코드·QR로 한 번 등록하면 끝.</p></div>
+        <div class="step"><b>STEP 02</b><h4>문 닫으면 자동 스캔</h4><p>도어 센서가 닫힘을 감지하면 RFID 리더가 즉시 모든 태그를 일괄 판독합니다.</p></div>
+        <div class="step"><b>STEP 03</b><h4>재고 · 유효기한 판정</h4><p>판독된 태그를 클라우드 약품 DB와 대조해 재고 차감과 유효기한 상태를 즉시 판정.</p></div>
+        <div class="step"><b>STEP 04</b><h4>앱 동기화 · 알림</h4><p>가족 앱으로 재고·이력·만료 예정이 동기화되고 D-90/30/7 단계별 알림이 전송됩니다.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="variants">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div><div class="eyebrow">Use Cases</div><h2>활용 모델 — 가정에서 파트너십까지</h2></div>
+      <p>MediHome 표준 모델을 토대로, 가정·요양시설·약국 세 가지 변형 모델을 함께 준비합니다.</p>
+    </div>
+    <div class="variants">
+      <div class="variant reveal">
+        <div class="pn-row"><span class="pn">VARIANT 01 · 가정용</span></div>
+        <h3>가정 · 가족 케어</h3>
+        <p>1인 가구, 맞벌이 부부, 부모님을 원격으로 케어하는 가정. 하나의 공용 약장으로 가족 모두의 약·건강기능식품을 한 번에.</p>
+        <ul>
+          <li>구성원별 복용 알림 분리</li>
+          <li>먼 곳 가족도 앱으로 재고·만료 확인</li>
+          <li>의약품·건강기능식품 통합 관리</li>
+        </ul>
+        <div class="for">FOR · 시니어 가정 · 맞벌이 부부 · 1인 가구</div>
+      </div>
+      <div class="variant alt reveal">
+        <div class="pn-row"><span class="pn">VARIANT 02 · 시설용</span></div>
+        <h3>요양원 · 시니어 시설</h3>
+        <p>입소자별 의약품 보관과 투약 기록 확인이 필요한 시설의 약장. 의료기관용 RFID 캐비닛의 추적 개념을 가정 환경 수준으로 단순화.</p>
+        <ul>
+          <li>입소자별 재고 가시성으로 투약 실수 리스크 감소</li>
+          <li>유효기한 관리로 폐기·유실 비용 절감</li>
+          <li>시설 맞춤 파생 모델 협의 가능</li>
+        </ul>
+        <div class="for">FOR · 요양원 · 요양병원 · 주간보호센터</div>
+      </div>
+      <div class="variant reveal">
+        <div class="pn-row"><span class="pn">VARIANT 03 · 파트너</span></div>
+        <h3>약국 · 헬스케어 파트너</h3>
+        <p>약국 채널 연계, 리테일 단말 확장, ODM/OEM 제조 협력. LCLIP ↔ IWCare 영업 대행 구조에 따라 판로를 함께 설계합니다.</p>
+        <ul>
+          <li>약국 연계 판로 협업 (LCLIP 영업 대행)</li>
+          <li>약국용 파생 모델 · 연계 단말 로드맵</li>
+          <li>ODM / OEM 제조 협력 검토</li>
+        </ul>
+        <div class="for">FOR · 약국 · 헬스케어 스타트업 · 공공 보건사업</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec soft about" id="about">
+  <div class="wrap about-grid">
+    <div class="about-media reveal">
+      <div class="ph">팀 / 사무실 / 현장 사진</div>
+      <div class="concept">
+        <span data-logo data-size="88"></span>
+        <p><b>C</b>가 품고, <b>W</b>가 두 팔을 들고, <b class="co">점</b> 하나가 <b>i</b>가 됩니다.<br>세 글자가 모여 웃는 사람 하나가 됩니다.</p>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="eyebrow">About IWCare</div>
+      <h2>돌봄의 빈틈을 기술로 채웁니다</h2>
+      <p>고령화 사회에서 가장 흔하고도 위험한 일상은 '약을 잊는 것'에서 시작됩니다. IWCare는 그 작은 순간을 지키는 일부터 시작했습니다.</p>
+      <p>하드웨어·앱·AI를 하나로 묶어, 어르신 본인과 가족, 돌봄 기관 모두가 같은 정보를 보고 함께 판단할 수 있는 돌봄 환경을 만듭니다.</p>
+      <div class="stats">
+        <div class="stat"><div class="num">6<small style="font-size:18px">대</small></div><div class="lbl">핵심 기능 (RFID / QR / 만료 / 환경 / 가족 / 공공)</div></div>
+        <div class="stat"><div class="num">3<small style="font-size:18px">종</small></div><div class="lbl">활용 모델 (가정 · 시설 · 파트너)</div></div>
+        <div class="stat"><div class="num">D-90</div><div class="lbl">만료 사전 알림 3단계 (90/30/7일)</div></div>
+      </div>
+      <div class="stats-note">※ 본 페이지의 사양·수치는 시제품 검증 기반으로, 양산 전 변경될 수 있습니다.</div>
+    </div>
+  </div>
+</section>
+
+<section id="leadership" class="lead">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div><div class="eyebrow">Leadership</div><h2>IWCare를 이끄는 사람들</h2></div>
+      <p>기술 · 운영 · 재무 — 각자의 전문성으로 역할을 나누고, 사업의 결과는 함께 책임집니다.</p>
+    </div>
+    <div class="team">
+      <article class="member ceo reveal in">
+        <div class="ph-photo">김선형 사진</div>
+        <div class="member-body"><span class="role">CEO · 대표이사</span><h3>김선형<small>대표</small></h3><p>회사 총괄 · 사업 비전과 대외 협력</p></div>
+      </article>
+      <article class="member reveal in">
+        <div class="ph-photo">박전규 사진</div>
+        <div class="member-body"><span class="role">CTO · 기술총괄</span><h3>박전규<small>대표</small></h3><p>제품 · 플랫폼 · AI 기술 개발</p></div>
+      </article>
+      <article class="member reveal in">
+        <div class="ph-photo">박일혁 사진</div>
+        <div class="member-body"><span class="role">COO · 운영총괄</span><h3>박일혁<small>교수</small></h3><p>사업 운영 · 현장 도입 · 기관 연계</p></div>
+      </article>
+      <article class="member reveal in">
+        <div class="ph-photo">김기훈 사진</div>
+        <div class="member-body"><span class="role">CFO · 재무총괄</span><h3>김기훈<small>교수</small></h3><p>재무 전략 · 투자 · 사업성 분석</p></div>
+      </article>
+    </div>
+    <p class="roster-note">※ 현재 구성 — 교내 벤처기업 승인 후 변경 예정 (승인 후: 박일혁 대표 · 김선형 CFO)</p>
+    <div class="joint reveal">
+      <div class="joint-head"><span data-logo data-theme="dark" data-size="48"></span><div><div class="eyebrow">Joint Responsibility</div><h3>네 사람의 공동 책임,<br>하나의 돌봄 제품</h3></div></div>
+      <div class="joint-units">
+        <a href="#features"><span>UNIT 01</span>스마트 약장<em>경영진 4인 공동 책임</em></a>
+        <a href="#variants"><span>UNIT 02</span>활용 모델 확장<em>가정 · 시설 · 파트너</em></a>
+        <a href="#contact"><span>UNIT 03</span>도입 · 투자 문의<em>직접 답변드립니다</em></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec trust" id="trust" style="background:#fff">
+  <div class="wrap">
+    <div class="sec-head reveal" style="margin-bottom:40px">
+      <div><div class="eyebrow">Architecture</div><h2>검증된 기술 구조</h2></div>
+      <p>의료기관용 RFID 캐비닛의 추적 개념을 가정 환경에 맞게 단순화한 양산형 구조입니다.</p>
+    </div>
+    <div class="features">
+      <div class="feat reveal"><div class="ic">🧩</div><span class="pn">하드웨어</span><h3>모듈형 아키텍처</h3><p>UHF RFID 리더 · 도어 센서 · 온습도 센서 · 상태 표시 모듈을 모듈형으로 결합. 시제품 → CAD 설계 → 양산으로 이어지는 구조.</p><span class="meta">ESP32 · R200 UHF · MQTT</span></div>
+      <div class="feat reveal"><div class="ic">☁️</div><span class="pn">소프트웨어</span><h3>클라우드 · 앱 동기화</h3><p>약장 펌웨어 · 모바일 앱 · 클라우드 기록 계층이 역할을 분담. WiFi/MQTT 기반 경량 통신으로 재고·이력·알림을 실시간 동기화.</p><span class="meta">WiFi · MQTT · JSON</span></div>
+      <div class="feat reveal"><div class="ic">🛡️</div><span class="pn">안전 · 표준</span><h3>특허 · 개인정보 보호</h3><p>RFID 스마트 약장 관련 국내 특허 출원 진행 중. 건강정보는 익명·가명 처리 기반 동의 체계로 설계, 식약처 공공데이터 연계 기본 적용.</p><span class="meta">특허 출원 · 민감정보 가이드 준수</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec soft contact" id="contact">
+  <div class="wrap contact-grid">
+    <div class="reveal">
+      <div class="eyebrow">Contact</div>
+      <h2>함께 돌봄을<br>설계해 보세요</h2>
+      <p style="color:var(--muted);font-size:17px;max-width:30em">기관 도입 · 가정용 구매 · 약국 파트너십 — 어떤 문의든 담당자가 직접 답변드립니다.</p>
+      <dl class="info">
+        <div><dt>EMAIL</dt><dd>contact&#64;iwcare.example</dd></div>
+        <div><dt>TEL</dt><dd>02-0000-0000</dd></div>
+        <div><dt>ADDRESS</dt><dd>[회사 본점 주소 — 확인 필요]</dd></div>
+        <div><dt>HQ ROSTER</dt><dd>김선형 CEO · 박전규 CTO · 박일혁 COO · 김기훈 CFO</dd></div>
+      </dl>
+    </div>
+    <form class="reveal" onsubmit="event.preventDefault();alert('문의가 접수되었습니다. (실제 전송 로직 연동 필요)')">
+      <div class="field"><label>문의 유형</label>
+        <div class="seg">
+          <label><input type="radio" name="t" checked><span>스마트 약장 도입</span></label>
+          <label><input type="radio" name="t"><span>시설 도입</span></label>
+          <label><input type="radio" name="t"><span>파트너십</span></label>
+          <label><input type="radio" name="t"><span>투자 · 기타</span></label>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field"><label for="n">이름 / 기관명</label><input id="n" required placeholder="홍길동 / ○○요양원"></div>
+        <div class="field"><label for="p">연락처</label><input id="p" required placeholder="010-0000-0000"></div>
+      </div>
+      <div class="field"><label for="m">문의 내용</label><textarea id="m" placeholder="궁금하신 점이나 도입 시 고려사항을 자유롭게 남겨주세요"></textarea></div>
+      <button class="btn btn-primary" style="height:56px;justify-content:center;width:100%">문의 보내기</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <span data-logo data-theme="dark" data-size="64"></span>
+        <div class="wm"><small>Intelligent</small><b>Wellness Care</b></div>
+      </div>
+      <div class="foot-links">
+        <a href="#features">6대 기능</a><a href="#how">작동 흐름</a><a href="#variants">활용 모델</a><a href="#about">회사 소개</a><a href="#contact">문의</a>
+      </div>
+    </div>
+    <div class="foot">
+      <span>IWCare · 대표 김선형 · 사업자등록번호 000-00-00000</span>
+      <span>© 2026 IWCare Co., Ltd. All rights reserved.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="image_slot.js"></script>
+<script src="brand/logo.js"></script>
+<script>
+  // nav scrolled state
+  const nav=document.getElementById('nav');
+  addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>8),{passive:true});
+  // reveal on scroll
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+
+<script type="module">
+  // image-slot light fallback: when image_slot.js not available, leave the .ph div as the placeholder.
+  // (page also renders fine without the script — the .ph divs remain visible.)
+</script>
+
+</body>
+</html>
