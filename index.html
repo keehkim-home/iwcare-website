@@ -144,12 +144,16 @@
   .lead{padding:120px 0;background:#fff;border-top:1px solid var(--line)}
   .team{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:40px}
   .member{background:#fff;border:1px solid var(--line);border-radius:24px;overflow:hidden;display:flex;flex-direction:column}
-  .member .ph-photo{aspect-ratio:1/1;background:var(--mint-soft);display:grid;place-items:center;color:var(--muted);font-family:var(--mono);font-size:11px}
+  .member .rolemark{aspect-ratio:1.55/1;background:linear-gradient(150deg,var(--mint-soft),var(--paper) 80%);display:flex;align-items:center;justify-content:space-between;padding:0 26px;border-bottom:1px solid var(--line)}
+  .member .rolemark b{font-family:var(--mono);font-size:clamp(30px,3.2vw,42px);font-weight:500;letter-spacing:.05em;color:var(--navy)}
+  .member .rolemark em{font-style:normal;font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;writing-mode:vertical-rl;opacity:.75}
   .member-body{padding:22px 24px 26px}
   .role{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--navy-2)}
   .member h3{font-size:22px;color:var(--navy);margin:6px 0 4px;font-family:var(--brand),var(--sans)}
   .member h3 small{font-size:15px;font-weight:500;color:var(--muted);margin-left:4px}
   .member p{font-size:14px;color:var(--muted)}
+  .member.ceo .rolemark{background:linear-gradient(150deg,var(--coral-soft),var(--paper) 80%)}
+  .member.ceo .rolemark b{color:var(--mint)}
   .member.ceo{border-color:var(--navy-2)}
   .member.ceo .role{color:#fff;background:var(--navy);display:inline-block;padding:3px 10px;border-radius:999px}
   .roster-note{margin-top:14px;font-size:13px;color:var(--muted);font-family:var(--mono)}
@@ -382,19 +386,19 @@
     </div>
     <div class="team">
       <article class="member ceo reveal in">
-        <div class="ph-photo">김선형 사진</div>
+        <div class="rolemark"><b>CEO</b><span data-logo data-size="24"></span></div>
         <div class="member-body"><span class="role">CEO · 대표이사</span><h3>김선형<small>대표</small></h3><p>회사 총괄 · 사업 비전과 대외 협력</p></div>
       </article>
       <article class="member reveal in">
-        <div class="ph-photo">박전규 사진</div>
+        <div class="rolemark"><b>CTO</b><span data-logo data-size="24"></span></div>
         <div class="member-body"><span class="role">CTO · 기술총괄</span><h3>박전규<small>대표</small></h3><p>제품 · 플랫폼 · AI 기술 개발</p></div>
       </article>
       <article class="member reveal in">
-        <div class="ph-photo">박일혁 사진</div>
+        <div class="rolemark"><b>COO</b><span data-logo data-size="24"></span></div>
         <div class="member-body"><span class="role">COO · 운영총괄</span><h3>박일혁<small>교수</small></h3><p>사업 운영 · 현장 도입 · 기관 연계</p></div>
       </article>
       <article class="member reveal in">
-        <div class="ph-photo">김기훈 사진</div>
+        <div class="rolemark"><b>CFO</b><span data-logo data-size="24"></span></div>
         <div class="member-body"><span class="role">CFO · 재무총괄</span><h3>김기훈<small>교수</small></h3><p>재무 전략 · 투자 · 사업성 분석</p></div>
       </article>
     </div>
